@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BARAKAH - Perkhidmatan Sesama Islam</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        :root {
+            --warna-ungu: #7B2CBF;
+            --warna-pink-tua: #B5179E;
+            --warna-biru-permata: #4361EE;
+            --warna-hijau: #22c55e;
+            --warna-kuning: #eab308;
+        }
+        * {margin:0; padding:0; box-sizing:border-box;}
+        body {background: #f8f9fa; padding-top: 80px; font-family: system-ui, -apple-system, sans-serif;}
+        .navbar-barakah {background: linear-gradient(135deg, var(--warna-ungu), var(--warna-pink-tua));}
+        .ikon-menu {
+            width: 70px; height: 70px; border-radius: 14px; border: none;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.12); margin: 6px; transition: transform 0.2s;
+        }
+        .ikon-menu:active {transform: scale(0.95);}
+        .ikon-menu i {font-size: 28px; color: white;}
+        .ikon-hantar {background: linear-gradient(135deg, var(--warna-biru-permata), #3A0CA3);}
+        .ikon-kereta {background: linear-gradient(135deg, var(--warna-pink-tua), #7B2CBF);}
+        .ikon-makanan {background: linear-gradient(135deg, #F72585, #B5179E);}
+        .ikon-solat {background: linear-gradient(135deg, var(--warna-hijau), #16a34a);}
+        .tanda-peranan {font-size:13px; font-weight:500; padding:3px 8px; border-radius:20px; color:white; background:rgba(0,0,0,0.2); margin-left:10px;}
+        .senarai-kerja {background:white; border:1px solid #ddd; border-radius:8px; padding:15px; margin:10px 0;}
+        .bahagian-bayar {background:#f8f9fa; border:1px dashed #666; border-radius:8px; padding:15px; margin:15px 0;}
+        .kotak-status {
+            background: #fff; border-left: 5px solid var(--warna-biru-permata);
+            padding:12px; border-radius:8px; margin:10px 0; box-shadow:0 2px 5px rgba(0,0,0,0.1);
+        }
+        .status-datang {border-left-color: var(--warna-hijau);}
+        .status-sampai {border-left-color: var(--warna-kuning);}
+        .status-siap {border-left-color: #6b7280;}
+        .gambar-profil-kecil {width:45px; height:45px; border-radius:50%; object-fit:cover; border:2px solid #fff; box-shadow:0 1px 3px rgba(0,0,0,0.2);}
+        .gambar-profil-besar {width:80px; height:80px; border-radius:50%; object-fit:cover; border:3px solid var(--warna-biru-permata); box-shadow:0 2px 6px rgba(0,0,0,0.15);}
+        .gambar-ic {width:100%; max-width:300px; height:auto; border-radius:8px; border:2px solid #ddd; object-fit:cover;}
+        .kepala-profil {display:flex; align-items:center; gap:10px; margin-bottom:10px;}
+        .tanda-belum-sah {color:#dc2626; font-weight:bold;}
+        .tanda-sah {color:#16a34a; font-weight:bold;}
+        .form-control, .form-select {border-radius:8px; padding:10px; border:1px solid #ced4da;}
+        .btn {border-radius:8px; padding:10px 16px; font-weight:500;}
+        .alert {font-size:18px !important;}
+    </style>
+</head>
+<body>
+
+<!-- NAVBAR - IKON ORANG DI KIRI -->
+<nav class="navbar navbar-expand-lg navbar-dark navbar-barakah fixed-top">
+  <div class="container">
+    <ul class="navbar-nav me-auto align-items-center">
+        <li class="nav-item">
+            <button class="btn btn-light text-dark rounded-circle p-1" style="width:45px; height:45px;" data-bs-toggle="modal" data-bs-target="#modalDaftar" id="btnAkaun">
+                <i class="bi bi-person fs-4"></i>
+            </button>
+        </li>
+        <span id="tandaPeranan" class="tanda-peranan d-none"></span>
+    </ul>
+    <a class="navbar-brand fw-bold fs-4 mx-auto" href="#"><i class="bi bi-star-fill text-warning"></i> BARAKAH</a>
+    <div style="width:45px;"></div>
+  </div>
+</nav>
+
+<!-- KANDUNGAN UTAMA -->
+<div class="container">
+    <h1 class="text-center fw-bold" style="color: var(--warna-ungu); font-size:26px;">SISTEM BARAKAH</h1>
+    <p class="text-center text-muted" style="font-size:15px;">Barakah Engineering | Perkhidmatan Sesama Islam | Satu Kawasan Satu Dunia | Harga Jelas Dari Awal</p>
+
+    <div id="kandunganUtama" class="mt-4">
+        <!-- PENGGUNA -->
+        <div id="paparanPengguna" class="d-none">
+            <div id="kotakStatusPerjalanan" class="d-none kotak-status">
+                <div class="kepala-profil">
+                    <img id="gambarPenghantarStatus" src="https://cdn-icons-png.flaticon.com/512/1053/1053244.png" class="gambar-profil-besar" alt="Penghantar">
+                    <div>
+                        <h5 class="fw-bold mb-1"><i class="bi bi-info-circle"></i> STATUS PERJALANAN</h5>
+                        <p id="teksStatus" class="mb-0 fw-medium"></p>
+                        <p class="small text-muted mb-0">Kenderaan: <span id="jenisKenderaanNampak"></span></p>
+                        <p class="small mb-0">Pengesahan: <span id="statusSah" class="tanda-belum-sah">🔍 Sedang Disemak</span></p>
+                        <button class="btn btn-danger w-100 mt-2" onclick="batalkanPesanan()">❌ BATALKAN TEMPAHAN</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-2 justify-content-center">
+                <div class="col-auto"><button class="ikon-menu ikon-hantar" onclick="buka('hantar')" title="Hantar Barang"><i class="bi bi-bicycle"></i></button></div>
+                <div class="col-auto"><button class="ikon-menu ikon-kereta" onclick="buka('teksi')" title="Perjalanan / Kereta"><i class="bi bi-car-front"></i></button></div>
+                <div class="col-auto"><button class="ikon-menu ikon-makanan" onclick="buka('makan')" title="Hantar Makanan"><i class="bi bi-egg-fried"></i></button></div>
+                <div class="col-auto"><button class="ikon-menu ikon-solat" onclick="buka('waktu')" title="Waktu Solat"><i class="bi bi-mosque"></i></button></div>
+            </div>
+        </div>
+
+        <!-- RIDER / PEMANDU -->
+        <div id="paparanRider" class="d-none">
+            <h4 class="fw-bold mb-3 text-center" style="color:var(--warna-biru-permata);"><i class="bi bi-bicycle"></i> KERJA TERSEDIA</h4>
+            <div id="senaraiKerja"></div>
+        </div>
+
+        <!-- LUAR -->
+        <div id="paparanLuar" class="text-center mt-5">
+            <div class="alert" style="background: linear-gradient(135deg, #E0C3FC, #8EC5FC); color:#222; padding:25px; border-radius:10px;">
+                <h5 class="fw-bold">Sila Tekan Ikon 👤 Di Atas Kiri Untuk Daftar / Log Masuk</h5>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL DAFTAR / LOG MASUK -->
+<div class="modal fade" id="modalDaftar" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header" style="background:linear-gradient(135deg, var(--warna-ungu), var(--warna-pink-tua)); color:white;">
+        <h5 class="modal-title fw-bold" id="tajukModal">AKAUN BARAKAH</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <ul class="nav nav-tabs mb-3" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#daftar" type="button">Daftar Akaun Baru</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#login" type="button">Log Masuk</button>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <!-- DAFTAR -->
+            <div class="tab-pane fade show active" id="daftar">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Pilih Peranan Anda:</label>
+                    <select class="form-select" id="pilihPeranan" onchange="tukarBorang()">
+                        <option value="">-- Sila Pilih --</option>
+                        <option value="pengguna">👤 PENGGUNA</option>
+                        <option value="rider">🛵 PENGHANTAR BARANG / MAKANAN</option>
+                        <option value="pemandu">🚗 PEMANDU KERETA</option>
+                    </select>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Nama Penuh <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="namaPenuh" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Nombor Telefon <span class="text-danger">*</span></label>
+                        <input type="tel" class="form-control" id="noTelDaftar" required placeholder="0123456789" maxlength="12">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Kata Laluan <span class="text-danger">*</span></label>
+                    <input type="password" class="form-control" id="passDaftar" required minlength="6" placeholder="Min 6 aksara">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Nombor IC <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="noIC" required placeholder="900101-10-1234" maxlength="14">
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Nama Waris <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="namaWaris" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Tel Waris <span class="text-danger">*</span></label>
+                        <input type="tel" class="form-control" id="telWaris" required maxlength="12">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Kawasan Operasi <span class="text-danger">*</span></label>
+                    <select class="form-select" id="kawasan" required>
+                        <option value="">-- Pilih Kawasan --</option>
+                        <option>Kampung Melayu</option>
+                        <option>Taman Melati</option>
+                        <option>Pekan Baru</option>
+                        <option>Bandar Utama</option>
+                        <option>Taman Sri Rampai</option>
+                    </select>
+                </div>
+                <div class="mb-3 d-none" id="bahagianKenderaan">
+                    <label class="form-label fw-bold">Jenis Kenderaan <span class="text-danger">*</span></label>
+                    <select class="form-select" id="jenisKenderaan">
+                        <option value="motor">🛵 Motor / Skuter</option>
+                        <option value="basikal">🚲 Basikal</option>
+                        <option value="van">🚚 Van / Lori Kecil</option>
+                        <option value="kereta">🚗 Kereta</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Gambar Profil <span class="text-danger">*</span></label>
+                    <input type="file" class="form-control" id="gambarProfil" accept="image/*" required onchange="paparGambarIni(event)">
+                    <img id="paparGambar" src="https://cdn-icons-png.flaticon.com/512/1053/1053244.png" class="gambar-profil-besar mt-2" alt="Pratonton">
+                </div>
+                <div class="mb-3 d-none" id="bahagianIC">
+                    <label class="form-label fw-bold text-danger">Gambar IC <span class="text-danger">*</span></label>
+                    <input type="file" class="form-control" id="gambarIC" accept="image/*" onchange="paparGambarIC(event)">
+                    <img id="paparIC" src="https://cdn-icons-png.flaticon.com/512/1053/1053244.png" class="gambar-ic mt-2" alt="Gambar IC">
+                </div>
+                <div class="form-check mt-3">
+                    <input class="form-check-input" type="checkbox" id="setuju" required>
+                    <label class="form-check-label">Saya beragama Islam & maklumat BENAR</label>
+                </div>
+                <button class="btn w-100 text-white mt-3" style="background: var(--warna-ungu);" onclick="daftarAhli()">✅ DAFTAR SEKARANG</button>
+            </div>
+            <!-- LOGIN -->
+            <div class="tab-pane fade" id="login">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Nombor Telefon</label>
+                    <input type="tel" class="form-control" id="noTelLogin" required placeholder="0123456789" maxlength="12">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Kata Laluan</label>
+                    <input type="password" class="form-control" id="passLogin" required placeholder="Kata laluan anda">
+                </div>
+                <button class="btn w-100 text-white" style="background: var(--warna-ungu);" onclick="logMasuk()">🔑 LOG MASUK</button>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PERKHIDMATAN -->
+<div class="modal fade" id="modalPerkhidmatan" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header" style="background: var(--warna-biru-permata); color:white;">
+        <h5 class="modal-title" id="tajukJenis"></h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label">Alamat Tujuan</label>
+          <input type="text" id="tujuan" class="form-control" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label" id="labelHarga"></label>
+          <input type="number" step="0.10" min="1" id="harga" class="form-control" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Catatan</label>
+          <textarea id="catatan" class="form-control" placeholder="Contoh: Barang rapuh / Pesanan khas"></textarea>
+        </div>
+        <button class="btn w-100 text-white" style="background: var(--warna-biru-permata);" onclick="hantarTempahan()">✅ HANTAR TEMPAHAN</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL WAKTU SOLAT -->
+<div class="modal fade" id="modalWaktu" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header" style="background: var(--warna-hijau); color:white;">
+        <h5 class="modal-title">🕌 WAKTU SOLAT KAWASAN</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body text-center">
+        <p class="fw-bold">Kawasan: <span id="kawasanSolat"></span></p>
+        <ul class="list-group mt-3">
+            <li class="list-group-item d-flex justify-content-between"><span>Subuh</span><span>05:42</span></li>
+            <li class="list-group-item d-flex justify-content-between"><span>Zuhur</span><span>13:15</span></li>
+            <li class="list-group-item d-flex justify-content-between"><span>Asar</span><span>16:30</span></li>
+            <li class="list-group-item d-flex justify-content-between"><span>Maghrib</span><span>19:21</span></li>
+            <li class="list-group-item d-flex justify-content-between"><span>Isyak</span><span>20:35</span></li>
+        </ul>
+        <p class="text-muted small mt-3">*Waktu anggaran mengikut kawasan anda</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL STATUS -->
+<div class="modal fade" id="modalStatus" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header" style="background: var(--warna-ungu); color:white;">
+        <h5 class="modal-title">📝 KEMASKINI STATUS</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <button class="btn btn-success w-100 mb-2" onclick="tukarStatus('sedang_datang')">🚗 SEDANG DALAM PERJALANAN</button>
+        <button class="btn btn-warning w-100 mb-2" onclick="tukarStatus('sampai')">📍 SUDAH SAMPAI</button>
+        <button class="btn btn-secondary w-100" onclick="tukarStatus('siap')">✅ KERJA SELESAI</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FIREBASE & SCRIPT -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-app.js";
+  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-auth.js";
+  import { getFirestore, setDoc, doc, getDoc, collection, addDoc, updateDoc, deleteDoc, onSnapshot, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-firestore.js";
+  import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-storage.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCFxQfLeeEzSX0VdsSpOkhAkH214f8zy8M",
+    authDomain: "barakah-sistem.firebaseapp.com",
+    projectId: "barakah-sistem",
+    storageBucket: "barakah-sistem.firebasestorage.app",
+    messagingSenderId: "903364289395",
+    appId: "1:903364289395:web:216c951e1492bd12b21b06"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  const storage = getStorage(app);
+
+  let pengguna = null;
+  let kawasanSaya = "";
+  let jenisKerja = "";
+  let pesananAktif = null;
+
+  window.paparGambarIni = function(e){
+    const pratonton = document.getElementById('paparGambar');
+    pratonton.src = URL.createObjectURL(e.target.files[0]);
+  }
+  window.paparGambarIC = function(e){
+    const pratonton = document.getElementById('paparIC');
+    pratonton.src = URL.createObjectURL(e.target.files[0]);
+  }
+
+  window.tukarBorang = function(){
+    const peranan = document.getElementById('pilihPeranan').value;
+    const bahagianKenderaan = document.getElementById('bahagianKenderaan');
+    const bahagianIC = document.getElementById('bahagianIC');
+    
+    if(peranan === 'rider' || peranan === 'pemandu'){
+      bahagianKenderaan.classList.remove('d-none');
+      bahagianIC.classList.remove('d-none');
+      document.getElementById('gambarIC').required = true;
+    } else {
+      bahagianKenderaan.classList.add('d-none');
+      bahagianIC.classList.add('d-none');
+      document.getElementById('gambarIC').required = false;
+    }
+  }
+
+  onAuthStateChanged(auth, async (user) => {
+    if(user){
+      try {
+        const docRef = doc(db, "ahli", user.uid);
+        const docSnap = await getDoc(docRef);
+        if(docSnap.exists()){
+          pengguna = {id:docSnap.id, ...docSnap.data()};
+          kawasanSaya = pengguna.kawasan;
+          
+          let namaPeranan = {
+            pengguna: "👤 PENGGUNA",
+            rider: "🛵 PENGHANTAR",
+            pemandu: "🚗 PEMANDU"
+          };
+          document.getElementById('tandaPeranan').innerText = namaPeranan[pengguna.jenis];
+          document.getElementById('tandaPeranan').classList.remove('d-none');
+          
+          document.getElementById('btnAkaun').outerHTML = `<button class="btn btn-danger text-white rounded-circle p-1" style="width:45px; height:45px;" onclick="keluar()" title="Keluar"><i class="bi bi-box-arrow-right fs-4"></i></button>`;
+          
+          paparIkutPeranan();
+          
+          if(pengguna.jenis === "rider" || pengguna.jenis === "pemandu"){
+            dengarPesanan();
+          } else {
+            dengarStatusPerjalanan();
+          }
+        }
+      } catch(e){
+        console.error(e);
+      }
+    } else {
+      pengguna = null;
+      resetPaparan();
+    }
+  });
+
+  function resetPaparan(){
+    document.getElementById('tandaPeranan').classList.add('d-none');
+    document.getElementById('paparanPengguna').classList.add('d-none');
+    document.getElementById('paparanRider').classList.add('d-none');
+    document.getElementById('paparanLuar').classList.remove('d-none');
+    document.getElementById('kotakStatusPerjalanan').classList.add('d-none');
+  }
+
+  function paparIkutPeranan(){
+    document.getElementById('paparanLuar').classList.add('d-none');
+    document.querySelectorAll('#kandunganUtama > div:not(#paparanLuar)').forEach(div => div.classList.add('d-none'));
+    
+    if(pengguna.jenis === "pengguna"){
+      document.getElementById('paparanPengguna').classList.remove('d-none');
+    }
+    else if(pengguna.jenis === "rider" || pengguna.jenis === "pemandu"){
+      document.getElementById('paparanRider').classList.remove('d-none');
+    }
+  }
+
+  window.daftarAhli = async function(){
+    const nama = document.getElementById('namaPenuh').value.trim();
+    const tel = document.getElementById('noTelDaftar').value.trim();
+    const pass = document.getElementById('passDaftar').value;
+    const ic = document.getElementById('noIC').value.trim();
+    const namaWaris = document.getElementById('namaWaris').value.trim();
+    const telWaris = document.getElementById('telWaris').value.trim();
+    const kawasan = document.getElementById('kawasan').value;
+    const jenis = document.getElementById('pilihPeranan').value;
+    const setuju = document.getElementById('setuju').checked;
+    const failGambar = document.getElementById('gambarProfil').files[0];
+    const failIC = document.getElementById('gambarIC').files[0];
+    
+    if(!nama || !tel || !pass || !ic || !namaWaris || !telWaris || !kawasan || !jenis || !setuju || !failGambar){
+      Swal.fire('Perhatian!','Sila lengkapkan semua maklumat','warning');
+      return;
+    }
+
+    const email = tel + "@barakah.my";
+
+    try {
+      const cred = await createUserWithEmailAndPassword(auth, email, pass);
+      
+      const pathGambar = `profil/${cred.user.uid}_${Date.now()}`;
+      const snapshotGambar = await uploadBytes(ref(storage, pathGambar), failGambar);
+      const urlGambar = await getDownloadURL(snapshotGambar.ref);
+      
+      let urlIC = "";
+      if((jenis === 'rider' || jenis === 'pemandu') && failIC){
+        const pathIC = `ic/${cred.user.uid}_${Date.now()}`;
+        const snapshotIC = await uploadBytes(ref(storage, pathIC), failIC);
+        urlIC = await getDownloadURL(snapshotIC.ref);
+      }
+
+      await setDoc(doc(db, "ahli", cred.user.uid), {
+        nama: nama,
+        telefon: tel,
+        ic: ic,
+        namaWaris: namaWaris,
+        telWaris: telWaris,
+        kawasan: kawasan,
+        jenis: jenis,
+        jenisKenderaan: document.getElementById('jenisKenderaan')?.value || 'tiada',
+        agama: "Islam",
+        gambarProfil: urlGambar,
+        gambarIC: urlIC,
+        statusSah: jenis === 'pengguna' ? 'disahkan' : 'menunggu',
+        tarikhDaftar: new Date()
+      });
+
+      Swal.fire('Berjaya!','Akaun dicipta, anda sudah log masuk','success');
+      bootstrap.Modal.getInstance(document.getElementById('modalDaftar')).hide();
+    } catch(e){
+      if(e.code === 'auth/email-already-in-use'){
+        Swal.fire('Nombor Telefon Sudah Digunakan','Sila guna fungsi Log Masuk','warning');
+      } else {
+        Swal.fire('Ralat!',e.message,'error');
+      }
+    }
+  }
+
+  window.logMasuk = async function(){
+    const tel = document.getElementById('noTelLogin').value.trim();
+    const pass = document.getElementById('passLogin').value;
+    if(!tel || !pass) return;
+
+    try {
+      const email = tel + "@barakah.my";
+      await signInWithEmailAndPassword(auth, email, pass);
+      Swal.fire('Berjaya Log Masuk','','success');
+      bootstrap.Modal.getInstance(document.getElementById('modalDaftar')).hide();
+    } catch(e){
+      Swal.fire('Gagal','Nombor atau kata laluan salah','error');
+    }
+  }
+
+  window.buka = function(jenis){
+    if(!pengguna){
+      Swal.fire('Sila Daftar / Log Masuk Dahulu!','Tekan ikon orang di atas kiri.','warning');
+      return;
+    }
+    if(jenis === 'waktu'){
+      document.getElementById('kawasanSolat').innerText = kawasanSaya;
+      new bootstrap.Modal(document.getElementById('modalWaktu')).show();
+      return;
+    }
+    jenisKerja = jenis;
+    let tajuk = {
+      teksi: '🚗 PERJALANAN KERETA',
+      hantar: '📦 HANTAR BARANG',
+      makan: '🍔 HANTAR MAKANAN'
+    }[jenis];
+    let label = {
+      teksi: 'Tambang (RM)',
+      hantar: 'Harga Hantar (RM)',
+      makan: 'Harga Pesanan (RM)'
+    }[jenis];
+    document.getElementById('tajukJenis').innerText = tajuk;
+    document.getElementById('labelHarga').innerText = label;
+    new bootstrap.Modal(document.getElementById('modalPerkhidmatan')).show();
+  }
+
+  window.hantarTempahan = async function(){
+    const tujuan = document.getElementById('tujuan').value.trim();
+    const harga = parseFloat(document.getElementById('tujuan').value.trim());
+    const catatan = document.getElementById('catatan').value.trim();
+
+    if(!tujuan || !harga || harga < 1){
+      Swal.fire('Perhatian!','Sila isi maklumat dengan betul','warning');
+      return;
+    }
+
+    try {
+      const docRef = await addDoc(collection(db, "pesanan"), {
+        jenis: jenisKerja,
+        dariKawasan: kawasanSaya,
+        tujuan: tujuan,
+        hargaTetap: harga,
+        catatan: catatan,
+        namaPengguna: pengguna.nama,
+        penggunaId: pengguna.id,
+        telWarisPengguna: pengguna.telWaris,
+        status: 'menunggu',
+        statusPerjalanan: 'belum_mula',
+        statusSah: pengguna.statusSah,
+        masa: new Date()
+      });
+
+      pesananAktif = docRef.id;
+      Swal.fire('Berjaya!','Tempahan dihantar, menunggu penerimaan','success');
+      bootstrap.Modal.getInstance(document.getElementById('modalPerkhidmatan')).hide();
+    } catch(e){
+      Swal.fire('Ralat!',e.message,'error');
+    }
+  }
+
+  function dengarPesanan(){
+    const q = query(collection(db, "pesanan"), where("dariKawasan","==",kawasanSaya), where("status","==","menunggu"), orderBy("masa","desc"));
+    onSnapshot(q, (snapshot) => {
+      const senarai = document.getElementById('senaraiKerja');
+      senarai.innerHTML = '';
+
+      snapshot.docChanges().forEach((change) => {
+        const d = change.doc.data();
+        const id = change.doc.id;
+
+        if(change.type === "removed"){
+          const elemen = document.getElementById('kerja_'+id);
+          if(elemen) elemen.remove();
+          return;
+        }
+        if(change.type === "modified") return;
+
+        if(
+          (pengguna.jenis === "rider" && (d.jenis === "hantar" || d.jenis === "makan")) ||
+          (pengguna.jenis === "pemandu" && d.jenis === "teksi")
+        ){
+          senarai.innerHTML += `
+            <div class="senarai-kerja shadow-sm" id="kerja_${id}">
+              <div class="kepala-profil mb-2">
+                <img src="${d.gambarProfil || 'https://cdn-icons-png.flaticon.com/512/1053/1053244.png'}" class="gambar-profil-kecil">
+                <div>
+                  <p class="mb-0 fw-bold">${d.namaPengguna}</p>
+                  <small class="text-muted">${{teksi:'🚗',hantar:'📦',makan:'🍔'}[d.jenis]} ${d.tujuan}</small>
+                </div>
+              </div>
+              <p><strong>Harga:</strong> RM ${(d.hargaTetap || 0).toFixed(2)}</p>
+              <p><strong>Catatan:</strong> ${d.catatan || '-'}</p>
+              <button class="btn w-100 text-white" style="background: var(--warna-biru-permata); margin-top:8px;" onclick="terimaKerja('${id}')">✅ TERIMA KERJA</button>
+            </div>
+          `;
+        }
+      });
+    });
+  }
+
+  window.terimaKerja = async function(idPesanan){
+    try {
+      await updateDoc(doc(db, "pesanan", idPesanan), {
+        status:'diterima',
+        kerjaOleh:pengguna.id,
+        namaPekerja:pengguna.nama,
+        gambarPekerja: pengguna.gambarProfil,
+        jenisKenderaan: pengguna.jenisKenderaan,
+        statusPerjalanan: 'sedang_datang',
+        statusSah: pengguna.statusSah,
+        telPekerja: pengguna.telefon,
+        telWarisPekerja: pengguna.telWaris
+      });
+      
+      pesananAktif = idPesanan;
+      
+      Swal.fire({
+        title:'Berjaya Terima Kerja!',
+        text:'Sila kemas kini status semasa perjalanan',
+        icon:'success',
+        confirmButtonText: 'BUKA STATUS'
+      }).then(() => {
+        new bootstrap.Modal(document.getElementById('modalStatus')).show();
+      });
+      
+    } catch(e){
+      Swal.fire('Ralat!',e.message,'error');
+    }
+  }
+
+  window.tukarStatus = async function(statusBaru){
+    if(!pesananAktif) return;
+    
+    let teks = '';
+    if(statusBaru === 'sedang_datang') teks = '🚗 Penghantar/Pemandu sedang dalam perjalanan';
+    if(statusBaru === 'sampai') teks = '📍 Penghantar/Pemandu sudah sampai di lokasi';
+    if(statusBaru === 'siap') teks = '✅ Perkhidmatan selesai, terima kasih';
+
+    try {
+      await updateDoc(doc(db, "pesanan", pesananAktif), {
+        statusPerjalanan: statusBaru,
+        teksStatus: teks,
+        masaKemaskini: new Date()
+      });
+      
+      Swal.fire('Dihantar!','Pengguna & Waris dapat notifikasi','success');
+      
+      if(statusBaru === 'siap'){
+        await deleteDoc(doc(db, "pesanan", pesananAktif));
+        pesananAktif = null;
+        bootstrap.Modal.getInstance(document.getElementById('modalStatus')).hide();
+      }
+    } catch(e){
+      Swal.fire('Ralat!',e.message,'error');
+    }
+  }
+
+  window.batalkanPesanan = async function(){
+    if(!pesananAktif) return;
+    const keputusan = await Swal.fire({
+      title: 'Anda Pasti?',
+      text: 'Tempahan akan dibatalkan sepenuhnya',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Ya, Batal',
+      cancelButtonText: 'Tidak'
+    });
+    if(keputusan.isConfirmed){
+      try {
+        await deleteDoc(doc(db, "pesanan", pesananAktif));
+        pesananAktif = null;
+        Swal.fire('Dibatalkan','Tempahan berjaya dibatalkan','success');
+      } catch(e){
+        Swal.fire('Ralat!',e.message,'error');
+      }
+    }
+  }
+
+  function dengarStatusPerjalanan(){
+    const q = query(collection(db, "pesanan"), where("penggunaId","==",pengguna.id), where("status","in",["menunggu","diterima"]));
+    onSnapshot(q, (snapshot) => {
+      snapshot.forEach((docSnap) => {
+        const d = docSnap.data();
+        pesananAktif = docSnap.id;
+        const kotak = document.getElementById('kotakStatusPerjalanan');
+        
+        document.getElementById('gambarPenghantarStatus').src = d.gambarPekerja || 'https://cdn-icons-png.flaticon.com/512/1053/1053244.png';
+        document.getElementById('teksStatus').innerText = d.teksStatus || 'Menunggu penerimaan...';
+        document.getElementById('jenisKenderaanNampak').innerText = d.jenisKenderaan || '-';
+        document.getElementById('statusSah').className = d.statusSah === 'disahkan' ? 'tanda-sah' : 'tanda-belum-sah';
+        document.getElementById('statusSah').innerText = d.statusSah === 'disahkan' ? '✅ DISAHKAN' : '🔍 SEDANG DISEMAK';
+        
+        kotak.classList.remove('d-none','status-datang','status-sampai','status-siap');
+        if(d.statusPerjalanan === 'sedang_datang') kotak.classList.add('status-datang');
+        if(d.statusPerjalanan === 'sampai') kotak.classList.add('status-sampai');
+        if(d.statusPerjalanan === 'siap') kotak.classList.add('status-siap');
+      });
+    });
+  }
+
+  window.keluar = async function(){
+    await signOut(auth);
+    location.reload();
+  }
+</script>
+
+</body>
+</html>
