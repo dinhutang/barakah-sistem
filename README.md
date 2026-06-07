@@ -1,2 +1,2 @@
 # barakah-sistem
-sistem perkhidmat barakah
+sistem perkhidmatan barakah
